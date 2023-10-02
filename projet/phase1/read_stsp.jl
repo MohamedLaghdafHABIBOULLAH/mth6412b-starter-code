@@ -94,6 +94,7 @@ end
 function read_edges(header::Dict{String}{String}, filename::String)
 
   edges = []
+  weights = []
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
   known_edge_weight_formats = ["FULL_MATRIX", "UPPER_ROW", "LOWER_ROW",
   "UPPER_DIAG_ROW", "LOWER_DIAG_ROW", "UPPER_COL", "LOWER_COL",
@@ -132,18 +133,24 @@ function read_edges(header::Dict{String}{String}, filename::String)
             n_edges = n_edges + 1
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
               edge = (k+1, i+k+2)
+              weight = parse(Float64, data[j + 1])
             elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
               edge = (k+1, i+k+1)
+              weight = parse(Float64, data[j + 1])
             elseif edge_weight_format in ["UPPER_COL", "LOWER_ROW"]
               edge = (i+k+2, k+1)
+              weight = parse(Float64, data[j + 1])
             elseif edge_weight_format in ["UPPER_DIAG_COL", "LOWER_DIAG_ROW"]
               edge = (i+1, k+1)
+              weight = parse(Float64, data[j + 1])
             elseif edge_weight_format == "FULL_MATRIX"
               edge = (k+1, i+1)
+              weight = parse(Float64, data[j + 1])
             else
               warn("Unknown format - function read_edges")
             end
             push!(edges, edge)
+            push!(weights, weight)
             i += 1
           end
 
@@ -166,7 +173,7 @@ function read_edges(header::Dict{String}{String}, filename::String)
     end
   end
   close(file)
-  return edges
+  return edges, weights
 end
 
 """Renvoie les noeuds et les arêtes du graphe."""
@@ -182,7 +189,7 @@ function read_stsp(filename::String)
   println("✓")
 
   Base.print("Reading of edges : ")
-  edges_brut = read_edges(header, filename)
+  edges_brut, _ = read_edges(header, filename)
   graph_edges = []
   for k = 1 : dim
     edge_list = Int[]
