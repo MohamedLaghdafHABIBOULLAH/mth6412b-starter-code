@@ -173,7 +173,6 @@ function read_edges(header::Dict{String}{String}, filename::String)
     end
   end
   close(file)
-  return edges
   return edges, weights
 end
 
@@ -190,7 +189,6 @@ function read_stsp(filename::String)
   println("✓")
 
   Base.print("Reading of edges : ")
-  edges_brut = read_edges(header, filename)
   edges_brut, _ = read_edges(header, filename)
   graph_edges = []
   for k = 1 : dim
