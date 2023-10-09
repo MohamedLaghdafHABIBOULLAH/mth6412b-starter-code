@@ -1,55 +1,64 @@
+""" Inclure les fichiers du projet"""
+
 include("node.jl")
 include("edge.jl")
 include("graph.jl")
 include("read_stsp.jl")
 
-function convert_to_edge(edge, weight, nodes_c)
-    node1 = nodes_c[edge[1]]
-    node2 = nodes_c[edge[2]]
-    edge_c = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
-    return edge_c
+""" Cette fonction permet de construire une arrete étant donné les arretes renvoyées par read_edges """
+function convert_to_edge(edge, weight, nodes)
+    node1 = nodes[edge[1]]
+    node2 = nodes[edge[2]]
+    edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
+    return edge
 end
 
+""" Cette fonction permet de construire un vecteur de noeuds étant donné un dictionnaire de noeud renvoyée par read_nodes """
 function convert_to_node(nodes)
-    nd = []
+    vect_nodes = []
     for (keys, vals) in nodes
         node = Node(string(keys), vals)
-        push!(nd, node)
+        push!(vect_nodes, node)
     end
-    return Vector{typeof(nd[1])}(nd)
+    return Vector{typeof(vect_nodes[1])}(vect_nodes)
 end
 
+"""Cette fonction permet de generer les noeuds dans le cas où l'instance"""
 function generate_nodes(dim)
-    nd = []
-    for i in 1:dim
+    vect_nodes = []
+    for i = 1:dim
         node = Node(string(i), 0)
-        push!(nd, node)
+        push!(vect_nodes, node)
     end
-    return Vector{typeof(nd[1])}(nd)
-end    
+    return Vector{typeof(vect_nodes[1])}(vect_nodes)
+end
 
+"""Cette fonction permet de generer le graphe étant donné une instance stsp """
 function graph_from_instance(filename::String)
-    
+
     header = read_header(filename)
     dim = parse(Int, header["DIMENSION"])
-    edges, weights = read_edges(header, filename)
+    edges_inst, weights_inst = read_edges(header, filename)
 
     if header["DISPLAY_DATA_TYPE"] == "None"
-        nodes_c = generate_nodes(dim)
+        nodes = generate_nodes(dim)
     else
-        nodes = read_nodes(header, filename)
-        nodes_c = convert_to_node(nodes)
+        nodes_inst = read_nodes(header, filename)
+        nodes = convert_to_node(nodes_inst)
     end
 
-    edges_c = convert_to_edge(edges[1],weights[1],nodes_c)
-        
-    graph = Graph(header["NAME"], nodes_c, [edges_c])
-    
-    for i in 2:length(edges)
-        edges_c = convert_to_edge(edges[i],weights[i], nodes_c)
-        add_edge!(graph, edges_c)
+    edge = convert_to_edge(edges_inst[1], weights_inst[1], nodes)
+
+    graph = Graph(header["NAME"], nodes, [edge])
+
+    if length(edges_inst) == 1
+        return graph
+    else
+        for i = 2:length(edges_inst)
+            edges = convert_to_edge(edges_inst[i], weights_inst[i], nodes)
+            add_edge!(graph, edges)
+        end
     end
 
     return graph
- end
- 
+end

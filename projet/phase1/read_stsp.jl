@@ -90,7 +90,7 @@ function n_nodes_to_read(format::String, n::Int, dim::Int)
   end
 end
 
-"""Analyse un fichier .tsp et renvoie l'ensemble des arêtes sous la forme d'un tableau."""
+"""Analyse un fichier .tsp et renvoie l'ensemble des arêtes sous la forme d'un tableau ainsi que leurs poids."""
 function read_edges(header::Dict{String}{String}, filename::String)
 
   edges = []

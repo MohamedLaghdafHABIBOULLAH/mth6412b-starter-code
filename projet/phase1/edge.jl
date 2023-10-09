@@ -9,7 +9,7 @@ Exemple:
 
         node1 = Node("Joe", 3.14)
         node2 = Node("Steve", exp(1))
-        arrete = Edge("My_edge", node1, node2, -1)
+        edge1 = Edge("My_edge", node1, node2, -1)
 
 """
 mutable struct Edge{T} <: AbstractEdge{T}

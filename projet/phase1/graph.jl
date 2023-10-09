@@ -10,9 +10,11 @@ Exemple :
     node1 = Node("Joe", 3.14)
     node2 = Node("Steve", exp(1))
     node3 = Node("Jill", 4.12)
-    G = Graph("Ick", [node1, node2, node3])
+    edge1 = Edge("1-2", node1, node2, 0.5)
+    edge1 = Edge("1-3", node1, node3, 0.5)
+    G = Graph("Ick", [node1, node2, node3], [edge1, edge2])
 
-Attention, tous les noeuds doivent avoir des données de même type.
+Attention, tous les noeuds et arêtes doivent avoir des données de même type.
 """
 mutable struct Graph{T} <: AbstractGraph{T}
   name::String
