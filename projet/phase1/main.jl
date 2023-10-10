@@ -5,31 +5,51 @@ include("edge.jl")
 include("graph.jl")
 include("read_stsp.jl")
 
-""" Cette fonction permet de construire une arrete étant donné les arretes renvoyées par read_edges """
-function convert_to_edge(edge, weight, nodes)
-    node1 = nodes[edge[1]]
-    node2 = nodes[edge[2]]
-    edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
-    return edge
-end
-
 """ Cette fonction permet de construire un vecteur de noeuds étant donné un dictionnaire de noeud renvoyée par read_nodes """
 function convert_to_node(nodes)
-    vect_nodes = []
-    for (keys, vals) in nodes
-        node = Node(string(keys), vals)
+    vect_nodes = []  # Crée un tableau vide pour stocker les nœuds résultants
+    
+    # Parcourt chaque paire clé-valeur dans le dictionnaire 'nodes'
+    for (key, value) in nodes
+        # Crée un nouveau nœud (Node) en utilisant la clé (convertie en chaîne) et la valeur
+        node = Node(string(key), value)
+        
+        # Ajoute le nœud à 'vect_nodes'
         push!(vect_nodes, node)
     end
+    
+    # Retourne un tableau de type Vector contenant les nœuds créés
     return Vector{typeof(vect_nodes[1])}(vect_nodes)
+end
+
+
+""" Cette fonction permet de construire une arrete étant donné les arretes renvoyées par read_edges """
+function convert_to_edge(edge, weight, nodes)
+    # Récupère les nœuds correspondants aux indices edge[1] et edge[2] à partir du tableau de nœuds 'nodes'
+    node1 = nodes[edge[1]]
+    node2 = nodes[edge[2]]
+    
+    # Crée une nouvelle arête (Edge) avec une clé au format "node1-node2", les nœuds node1 et node2, et le poids spécifié
+    edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
+    
+    # Retourne l'arête créée
+    return edge
 end
 
 """Cette fonction permet de generer les noeuds dans le cas où l'instance"""
 function generate_nodes(dim)
-    vect_nodes = []
+    vect_nodes = []  # Crée un tableau vide pour stocker les nœuds résultants
+    
+    # Parcourt les entiers de 1 à 'dim' inclus
     for i = 1:dim
+        # Crée un nouveau nœud (Node) avec une clé basée sur la valeur de 'i' et une valeur initiale de 0
         node = Node(string(i), 0)
+        
+        # Ajoute le nœud à 'vect_nodes'
         push!(vect_nodes, node)
     end
+    
+    # Retourne un tableau de type Vector contenant les nœuds créés
     return Vector{typeof(vect_nodes[1])}(vect_nodes)
 end
 

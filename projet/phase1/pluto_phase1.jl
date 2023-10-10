@@ -410,6 +410,9 @@ weights_bayg29
 ```
 """
 
+# ╔═╡ 0db94498-4b73-4d73-b9f1-4af2783db28d
+md""" on vérifie que les deux listes ont la même longueur."""
+
 # ╔═╡ 613362b9-ce0d-4d74-a1e3-8e88a0859249
 md"""
 ##### 6. Fournir un programme principal qui lit une instance de TSP symétrique dont les poids sont donnés au format EXPLICIT et construit un objet de type Graph correspondant.
@@ -426,11 +429,18 @@ md"""
 md"""
 ```julia
 function convert_to_node(nodes)
-    vect_nodes = []
-    for (keys, vals) in nodes
-        node = Node(string(keys), vals)
+    vect_nodes = []  # Crée un tableau vide pour stocker les nœuds résultants
+    
+    # Parcourt chaque paire clé-valeur dans le dictionnaire 'nodes'
+    for (key, value) in nodes
+        # Crée un nouveau nœud (Node) en utilisant la clé (convertie en chaîne) et la valeur
+        node = Node(string(key), value)
+        
+        # Ajoute le nœud à 'vect_nodes'
         push!(vect_nodes, node)
     end
+    
+    # Retourne un tableau de type Vector contenant les nœuds créés
     return Vector{typeof(vect_nodes[1])}(vect_nodes)
 end
 ```
@@ -446,9 +456,14 @@ md"""
 md"""
 ```julia
 function convert_to_edge(edge, weight, nodes)
+    # Récupère les nœuds correspondants aux indices edge[1] et edge[2] à partir du tableau de nœuds 'nodes'
     node1 = nodes[edge[1]]
     node2 = nodes[edge[2]]
+    
+    # Crée une nouvelle arête (Edge) avec une clé au format "node1-node2", les nœuds node1 et node2, et le poids spécifié
     edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
+    
+    # Retourne l'arête créée
     return edge
 end
 ```
@@ -464,11 +479,18 @@ md"""
 md"""
 ```julia
 function generate_nodes(dim)
-    vect_nodes = []
+    vect_nodes = []  # Crée un tableau vide pour stocker les nœuds résultants
+    
+    # Parcourt les entiers de 1 à 'dim' inclus
     for i = 1:dim
+        # Crée un nouveau nœud (Node) avec une clé basée sur la valeur de 'i' et une valeur initiale de 0
         node = Node(string(i), 0)
+        
+        # Ajoute le nœud à 'vect_nodes'
         push!(vect_nodes, node)
     end
+    
+    # Retourne un tableau de type Vector contenant les nœuds créés
     return Vector{typeof(vect_nodes[1])}(vect_nodes)
 end
 ```
@@ -1196,6 +1218,7 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─1b924b80-7a08-406a-b8ec-caa56c0d0f09
 # ╟─4c403f99-5aa0-4b2a-9f3b-1777331ea4c7
 # ╟─aa11233e-704d-4667-a859-fe0375ac2447
+# ╟─0db94498-4b73-4d73-b9f1-4af2783db28d
 # ╟─613362b9-ce0d-4d74-a1e3-8e88a0859249
 # ╟─31731546-f972-4e36-8508-623ab6ff257e
 # ╟─22ac3ee9-240c-4ce4-b715-f39d2cfa3d19
