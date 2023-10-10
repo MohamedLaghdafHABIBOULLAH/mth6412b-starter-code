@@ -55,11 +55,12 @@ end
 
 """Cette fonction permet de generer le graphe étant donné une instance stsp """
 function graph_from_instance(filename::String)
-
+    # Lecture de l'en-tête du fichier et extraction de la dimension et des arêtes
     header = read_header(filename)
     dim = parse(Int, header["DIMENSION"])
     edges_inst, weights_inst = read_edges(header, filename)
 
+    # Vérification du type de données d'affichage et génération des nœuds en conséquence
     if header["DISPLAY_DATA_TYPE"] == "None"
         nodes = generate_nodes(dim)
     else
@@ -67,13 +68,12 @@ function graph_from_instance(filename::String)
         nodes = convert_to_node(nodes_inst)
     end
 
+    # Conversion de la première arête et création du graphe initial
     edge = convert_to_edge(edges_inst[1], weights_inst[1], nodes)
-
     graph = Graph(header["NAME"], nodes, [edge])
 
-    if length(edges_inst) == 1
-        return graph
-    else
+    # Ajout des arêtes restantes au graphe
+    if length(edges_inst) > 1
         for i = 2:length(edges_inst)
             edges = convert_to_edge(edges_inst[i], weights_inst[i], nodes)
             add_edge!(graph, edges)

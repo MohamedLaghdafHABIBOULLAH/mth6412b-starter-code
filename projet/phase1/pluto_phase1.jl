@@ -24,6 +24,9 @@ md""" Le  code se trouve au lien suivant: """
 # ╔═╡ c49caeea-0bdd-4cd3-8e50-c739befecd98
 md"""[https://github.com/MohamedLaghdafHABIBOULLAH/mth6412b-starter-code.git](https://github.com/MohamedLaghdafHABIBOULLAH/mth6412b-starter-code.git)"""
 
+# ╔═╡ 2ca058c6-5f4b-47d1-9282-a8803eaf19c5
+md""" Le lecteur peut fork le projet et lancer le fichier main.jl pour retrouver les résultats ci-dessous"""
+
 # ╔═╡ d16af9e4-e9fd-49df-97e4-b6af7193d63f
 md"""
 ##### 1. Proposer un type Edge pour représenter les arêtes d’un graphe
@@ -492,6 +495,46 @@ function generate_nodes(dim)
     
     # Retourne un tableau de type Vector contenant les nœuds créés
     return Vector{typeof(vect_nodes[1])}(vect_nodes)
+end
+```
+"""
+
+# ╔═╡ 6bec5999-67ea-4a77-aa24-e605e705330e
+md"""
+###### d. Voici la fonction qui generer graph_from_instance
+
+"""
+
+# ╔═╡ 679ccaae-cfa5-40ac-babd-f41dba2237b6
+md"""
+```julia
+function graph_from_instance(filename::String)
+    # Lecture de l'en-tête du fichier et extraction de la dimension et des arêtes
+    header = read_header(filename)
+    dim = parse(Int, header["DIMENSION"])
+    edges_inst, weights_inst = read_edges(header, filename)
+
+    # Vérification du type de données d'affichage et génération des nœuds en conséquence
+    if header["DISPLAY_DATA_TYPE"] == "None"
+        nodes = generate_nodes(dim)
+    else
+        nodes_inst = read_nodes(header, filename)
+        nodes = convert_to_node(nodes_inst)
+    end
+
+    # Conversion de la première arête et création du graphe initial
+    edge = convert_to_edge(edges_inst[1], weights_inst[1], nodes)
+    graph = Graph(header["NAME"], nodes, [edge])
+
+    # Ajout des arêtes restantes au graphe
+    if length(edges_inst) > 1
+        for i = 2:length(edges_inst)
+            edges = convert_to_edge(edges_inst[i], weights_inst[i], nodes)
+            add_edge!(graph, edges)
+        end
+    end
+
+    return graph
 end
 ```
 """
@@ -1183,6 +1226,7 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─5b0505f0-ab35-4ebc-9458-1914a54c7bfa
 # ╟─56c69abe-5f9d-433d-87ee-ad4d14d7e4ac
 # ╟─c49caeea-0bdd-4cd3-8e50-c739befecd98
+# ╟─2ca058c6-5f4b-47d1-9282-a8803eaf19c5
 # ╟─d16af9e4-e9fd-49df-97e4-b6af7193d63f
 # ╟─5b9924f3-f260-40be-8144-53d4fd3e0645
 # ╟─905d4a8a-9d15-45b3-8e3a-ffb33cd835b3
@@ -1224,8 +1268,10 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─22ac3ee9-240c-4ce4-b715-f39d2cfa3d19
 # ╟─d6bda406-8816-498a-ba04-a44ee55b22f8
 # ╟─eeb72bd5-07e6-4929-ae86-75b558b9faea
-# ╟─c4967e1a-6819-4c22-a9c6-755292f82096
-# ╟─d94e7200-a865-43a3-b925-16d8f5bb77eb
+# ╠═c4967e1a-6819-4c22-a9c6-755292f82096
+# ╠═d94e7200-a865-43a3-b925-16d8f5bb77eb
+# ╠═6bec5999-67ea-4a77-aa24-e605e705330e
+# ╠═679ccaae-cfa5-40ac-babd-f41dba2237b6
 # ╟─b7b7fbe5-3916-40df-a234-af6323f59778
 # ╟─862508d7-df53-475e-9120-65d2190f9b42
 # ╟─0bffd22b-a0fe-4422-b499-f3fd4079b057
