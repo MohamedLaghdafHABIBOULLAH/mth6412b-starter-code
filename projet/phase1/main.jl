@@ -42,7 +42,7 @@ function generate_nodes(dim)
     
     # Parcourt les entiers de 1 à 'dim' inclus
     for i = 1:dim
-        # Crée un nouveau nœud (Node) avec une clé basée sur la valeur de 'i' et une valeur initiale de 0
+        # Crée un nouveau nœud (Node) avec une clé basée sur la valeur de 'i' et une valeur de data par défaut qui vaut 0
         node = Node(string(i), 0)
         
         # Ajoute le nœud à 'vect_nodes'

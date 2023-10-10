@@ -486,7 +486,7 @@ function generate_nodes(dim)
     
     # Parcourt les entiers de 1 à 'dim' inclus
     for i = 1:dim
-        # Crée un nouveau nœud (Node) avec une clé basée sur la valeur de 'i' et une valeur initiale de 0
+        # Crée un nouveau nœud (Node) avec une clé basée sur la valeur de 'i' et une data oar défaut de 0
         node = Node(string(i), 0)
         
         # Ajoute le nœud à 'vect_nodes'
@@ -1268,10 +1268,10 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─22ac3ee9-240c-4ce4-b715-f39d2cfa3d19
 # ╟─d6bda406-8816-498a-ba04-a44ee55b22f8
 # ╟─eeb72bd5-07e6-4929-ae86-75b558b9faea
-# ╠═c4967e1a-6819-4c22-a9c6-755292f82096
-# ╠═d94e7200-a865-43a3-b925-16d8f5bb77eb
-# ╠═6bec5999-67ea-4a77-aa24-e605e705330e
-# ╠═679ccaae-cfa5-40ac-babd-f41dba2237b6
+# ╟─c4967e1a-6819-4c22-a9c6-755292f82096
+# ╟─d94e7200-a865-43a3-b925-16d8f5bb77eb
+# ╟─6bec5999-67ea-4a77-aa24-e605e705330e
+# ╟─679ccaae-cfa5-40ac-babd-f41dba2237b6
 # ╟─b7b7fbe5-3916-40df-a234-af6323f59778
 # ╟─862508d7-df53-475e-9120-65d2190f9b42
 # ╟─0bffd22b-a0fe-4422-b499-f3fd4079b057
