@@ -62,3 +62,10 @@ function graph_from_instance(filename::String)
 
     return graph
 end
+
+"""Exemples d'utilisation sur deux types d'instances gr17 et bayg29"""
+gr17 = graph_from_instance("instances/stsp/gr17.tsp");
+show(gr17)
+
+bayg29 = graph_from_instance("instances/stsp/bayg29.tsp");
+show(bayg29)
