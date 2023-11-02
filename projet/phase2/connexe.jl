@@ -61,15 +61,15 @@ function kruskal(graph::Graph; heuristique::Symbol = :default)
     edges = sort(graph.edges, by = x -> x.weight)
     minimum_spanning_tree = Edge{typeof(graph.nodes[1].data)}[]
     pred = Preds(graph.nodes)
-    #println(pred)
+    println(pred)
 
     for edge in edges
         if find(pred, edge.node1.name) != find(pred, edge.node2.name) # si les noeuds font partie de composante connexe distincte
             push!(minimum_spanning_tree, edge)
-            (heuristique == :default) && union(pred, edge.node1.name, edge.node2.name)
+            (heuristique == :default) && union_rank(pred, edge.node1.name, edge.node2.name)
             #(heuristique == :rank) && union(pred, edge.node1.name, edge.node2.name)
             #(heuristique == :comp) && union(pred, edge.node1.name, edge.node2.name)
-            #println(pred)
+            println(pred)
         end
     end
     println(pred)
