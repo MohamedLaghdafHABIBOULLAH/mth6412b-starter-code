@@ -61,19 +61,20 @@ function kruskal(graph::Graph; heuristique::Symbol = :default)
     edges = sort(graph.edges, by = x -> x.weight)
     minimum_spanning_tree = Edge{typeof(graph.nodes[1].data)}[]
     pred = Preds(graph.nodes)
-    println(pred)
-
+   # println(pred)
+    total_weight = 0.
     for edge in edges
         if find(pred, edge.node1.name) != find(pred, edge.node2.name) # si les noeuds font partie de composante connexe distincte
             push!(minimum_spanning_tree, edge)
             (heuristique == :default) && union_rank(pred, edge.node1.name, edge.node2.name)
+            total_weight += edge.weight
             #(heuristique == :rank) && union(pred, edge.node1.name, edge.node2.name)
             #(heuristique == :comp) && union(pred, edge.node1.name, edge.node2.name)
-            println(pred)
+          #  println(pred)
         end
     end
-    println(pred)
-    return minimum_spanning_tree
+   # println(pred)
+    return minimum_spanning_tree, total_weight
 end
 
 
@@ -108,14 +109,15 @@ edges_g = [edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edge10
 
 graph_g = Graph("Example Graph", nodes_g, edges_g)
 
-minimum_spanning_tree = kruskal(graph_g)
-for edge in minimum_spanning_tree
-    println("Edge: ", edge.name, ", Weight: ", edge.weight)
-end
+# minimum_spanning_tree, total_weight_g = kruskal(graph_g)
+# for edge in minimum_spanning_tree
+#     println("Edge: ", edge.name, ", Weight: ", edge.weight)
+# end
+# println("Total Weight: ", total_weight_g)
 
-# gr17 = graph_from_instance("instances/stsp/gr17.tsp");
-# mst = kruskal(gr17)
-# for edge in mst
-#      println("Edge: ", edge.name, ", Weight: ", edge.weight)
-#  end
-
+gr17 = graph_from_instance("instances/stsp/gr17.tsp");
+mst, tt = kruskal(gr17)
+for edge in mst
+     println("Edge: ", edge.name, ", Weight: ", edge.weight)
+ end
+ println("Total Weight: ", tt)
