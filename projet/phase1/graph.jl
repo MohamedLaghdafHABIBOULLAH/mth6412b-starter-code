@@ -16,22 +16,22 @@ Exemple :
 
 Attention, tous les noeuds et arêtes doivent avoir des données de même type.
 """
-mutable struct Graph{T} <: AbstractGraph{T}
+mutable struct Graph{T,Y} <: AbstractGraph{T}
   name::String
   nodes::Vector{Node{T}}
-  edges::Vector{Edge{T}}
+  edges::Vector{Edge{T,Y}}
 end
 
 
 
 """Ajoute un noeud au graphe."""
-function add_node!(graph::Graph{T}, node::Node{T}) where T
+function add_node!(graph::Graph{T,Y}, node::Node{T}) where {T,Y}
   push!(graph.nodes, node)
   graph
 end
 
 """Ajoute une arrete au graphe."""
-function add_edge!(graph::Graph{T}, edge::Edge{T}) where T
+function add_edge!(graph::Graph{T,Y}, edge::Edge{T}) where {T,Y}
   push!(graph.edges, edge)
   graph
 end

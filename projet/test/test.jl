@@ -5,8 +5,8 @@ include("../phase1/edge.jl")
 include("../phase1/graph.jl")
 include("../phase1/read_stsp.jl")
 include("../phase1/main.jl")
-#include("../phase2/connex.jl")
-#include("../phase2/prim.jl")
+include("../phase2/connexe.jl")
+include("../phase2/prim.jl")
 
 
 

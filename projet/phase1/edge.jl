@@ -12,11 +12,11 @@ Exemple:
         edge1 = Edge("My_edge", node1, node2, -1)
 
 """
-mutable struct Edge{T} <: AbstractEdge{T}
+mutable struct Edge{T,Y} <: AbstractEdge{T}
   name::String
   node1::Node{T}
   node2::Node{T}
-  weight
+  weight::Y
 end
 
 # Constructeur pour Edge
