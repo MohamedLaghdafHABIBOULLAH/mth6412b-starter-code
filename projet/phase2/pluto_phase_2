@@ -25,7 +25,7 @@ md""" Le  code se trouve au lien suivant: """
 md"""[https://github.com/MohamedLaghdafHABIBOULLAH/mth6412b-starter-code.git](https://github.com/MohamedLaghdafHABIBOULLAH/mth6412b-starter-code.git)"""
 
 # ╔═╡ 2ca058c6-5f4b-47d1-9282-a8803eaf19c5
-md""" Le lecteur peut fork le projet et lancer le fichier main.jl pour retrouver les résultats ci-dessous"""
+md""" Le lecteur peut fork le projet et lancer le fichier phase2/main.jl pour retrouver les résultats ci-dessous"""
 
 # ╔═╡ d16af9e4-e9fd-49df-97e4-b6af7193d63f
 md"""
@@ -143,339 +143,168 @@ end
 ```
 """
 
+# ╔═╡ d59015cb-e1f7-4f9e-9a21-180eff8e4b77
+md"""
+##### 3. Répondre à la question concernant le rang 
+"""
+
 # ╔═╡ 790f95ac-38f5-4546-8503-8a969aa33918
 md"""
-##### 3. Implémenter les deux heuristiques d’accélération et répondre à la question concernant le rang.
+###### a. Montrer que le rang d’un nœud sera toujours inférieur à |S | − 1. Montrer ensuite que ce rang sera en fait toujours inférieur à ⌊log2(|S|)⌋;
 """
 
 # ╔═╡ 53452089-7f8a-4fc1-871b-1313e866436f
-
-
-# ╔═╡ b986cefa-821b-47aa-93c3-b1a9422812db
-md"""
-```julia
-julia> @benchmark kruskal(graph_g)
-BenchmarkTools.Trial: 10000 samples with 5 evaluations.
- Range (min … max):  6.458 μs … 705.475 μs  ┊ GC (min … max): 0.00% … 98.91%
- Time  (median):     6.600 μs               ┊ GC (median):    0.00%
- Time  (mean ± σ):   6.748 μs ±   6.992 μs  ┊ GC (mean ± σ):  1.03% ±  0.99%
-
-      ▇▇█▆▃▃                                                   
-  ▁▂▃▆██████▅▃▃▂▂▂▃▃▅▄▃▃▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ ▂
-  6.46 μs         Histogram: frequency by time        7.55 μs <
-
- Memory estimate: 1.53 KiB, allocs estimate: 22.
-
-```
+md""" On sait qu'au pire des cas on aura une liste chainée du premier parent au dernier noeud et puisque le rang incrémente de 1 lors de l'ajout d'un noeud au pire des cas alors rang(s) inférieur à |S | − 1 pour tout noeud s.
 """
 
-# ╔═╡ 9ec73446-5542-4c64-ace1-09f004285f91
-md"""
-```julia
-show(graph)
-Graph Ick has 3 nodes and 2 edges 
-Node Joe, data: 3.14
-Node Steve, data: 2.718281828459045
-Node Jill, data: 4.12
-Edge 1-2, data: Node{Float64}[Node{Float64}("Joe", 3.14), Node{Float64}("Steve", 2.718281828459045)]
-Edge 1-3, data: Node{Float64}[Node{Float64}("Joe", 3.14), Node{Float64}("Jill", 4.12)]
-```
+# ╔═╡ b1d5add3-ac8d-402c-902e-8567891374aa
+md""" D'autre part, pour incrémenter le rang dans les pires des cas, on aura à fusionner deus enselbles de noeuds de même nombre donc on a 2^(rang(s)) < |S , d'où le résultat.
 """
 
 # ╔═╡ 723b6ebd-36be-4ea0-9669-ea9250592d78
 md"""
-##### 4. Étendre la fonction read\_edges() de read\_stsp.jl afin de lire les poids des arêtes (ils sont actuellement ignorés).
+##### 4. Implémenter l’algorithme de Prim vu au laboratoire et le tester sur l’exemple des notes de cours.
 """
 
 # ╔═╡ 08300d8f-c079-4a2e-a102-b70f567f439c
 md"""
-###### La modification dans cette fonction a été l'ajout des lignes suivantes dans read\_edges()"""
-
-# ╔═╡ c8b75398-f53c-40ad-8124-0949ecef02e1
-md"""
 ```julia
-	weights = []
-	weight = parse(Float64, data[j + 1])
-	push!(weights, weight)
-	return edges, weights
-```
-"""
-
-# ╔═╡ e22a9bd2-3692-4ef2-af7b-2136c82edf09
-"""Analyse un fichier .tsp et renvoie l'ensemble des arêtes sous la forme d'un tableau ainsi que leurs poids."""
-function read_edges(header::Dict{String}{String}, filename::String)
-
-  edges = []
-  weights = []
-  edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
-  known_edge_weight_formats = ["FULL_MATRIX", "UPPER_ROW", "LOWER_ROW",
-  "UPPER_DIAG_ROW", "LOWER_DIAG_ROW", "UPPER_COL", "LOWER_COL",
-  "UPPER_DIAG_COL", "LOWER_DIAG_COL"]
-
-  if !(edge_weight_format in known_edge_weight_formats)
-    @warn "unknown edge weight format" edge_weight_format
-    return edges
-  end
-
-  file = open(filename, "r")
-  dim = parse(Int, header["DIMENSION"])
-  edge_weight_section = false
-  k = 0
-  n_edges = 0
-  i = 0
-  n_to_read = n_nodes_to_read(edge_weight_format, k, dim)
-  flag = false
-
-  for line in eachline(file)
-    line = strip(line)
-    if !flag
-      if occursin(r"^EDGE_WEIGHT_SECTION", line)
-        edge_weight_section = true
-        continue
-      end
-
-      if edge_weight_section
-        data = split(line)
-        n_data = length(data)
-        start = 0
-        while n_data > 0
-          n_on_this_line = min(n_to_read, n_data)
-
-          for j = start : start + n_on_this_line - 1
-            n_edges = n_edges + 1
-            if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
-              edge = (k+1, i+k+2)
-              weight = parse(Float64, data[j + 1])
-            elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
-              edge = (k+1, i+k+1)
-              weight = parse(Float64, data[j + 1])
-            elseif edge_weight_format in ["UPPER_COL", "LOWER_ROW"]
-              edge = (i+k+2, k+1)
-              weight = parse(Float64, data[j + 1])
-            elseif edge_weight_format in ["UPPER_DIAG_COL", "LOWER_DIAG_ROW"]
-              edge = (i+1, k+1)
-              weight = parse(Float64, data[j + 1])
-            elseif edge_weight_format == "FULL_MATRIX"
-              edge = (k+1, i+1)
-              weight = parse(Float64, data[j + 1])
-            else
-              warn("Unknown format - function read_edges")
-            end
-            push!(edges, edge)
-            push!(weights, weight)
-            i += 1
-          end
-
-          n_to_read -= n_on_this_line
-          n_data -= n_on_this_line
-
-          if n_to_read <= 0
-            start += n_on_this_line
-            k += 1
-            i = 0
-            n_to_read = n_nodes_to_read(edge_weight_format, k, dim)
-          end
-
-          if k >= dim
-            n_data = 0
-            flag = true
-          end
+# Fonction pour implémenter l'algorithme de Prim afin de trouver l'arbre couvrant minimum
+function prim(graph::Graph{T}) where T
+    nodes = graph.nodes
+    num_nodes = length(nodes)
+    
+    # Initialiser un ensemble pour suivre les nœuds sélectionnés
+    selected = Set{Node{T}}()
+    
+    # Initialiser une file de priorité pour les arêtes candidates
+    candidate_edges = PriorityQueue{Edge{T}}()
+    
+    # Sélectionner le premier nœud arbitrairement et ajouter ses arêtes aux arêtes candidates
+    push!(selected, nodes[1])
+    for edge in graph.edges
+        if edge.node1 in selected && edge.node2 ∉ selected || edge.node1 ∉ selected && edge.node2 in selected
+            push!(candidate_edges, edge)
         end
-      end
     end
-  end
-  close(file)
-  return edges, weights
+    
+    # Initialiser le résultat
+    mst_edges = Edge{T}[]
+    total_weight = 0
+    
+    # Exécuter l'algorithme de Prim
+    while length(selected) < num_nodes
+        # Trouver l'arête de poids minimum dans les arêtes candidates
+        min_edge = popfirst!(candidate_edges)
+        min_weight = min_edge.weight
+        
+        # Vérifier si l'ajout de l'arête forme un cycle ou connecte un nouveau nœud
+        if !(min_edge.node1 in selected && min_edge.node2 in selected)
+            push!(mst_edges, min_edge)
+            total_weight += min_weight
+            
+            # Ajouter le nouveau nœud à l'ensemble sélectionné
+            new_node = min_edge.node1 in selected ? min_edge.node2 : min_edge.node1
+            push!(selected, new_node)
+            
+            # Ajouter les arêtes du nouveau nœud aux arêtes candidates
+            for edge in graph.edges
+                if (edge.node1 in selected && edge.node2 ∉ selected) || (edge.node1 ∉ selected && edge.node2 in selected)
+                    push!(candidate_edges, edge)
+                end
+            end
+        end
+    end
+    
+    return mst_edges, total_weight
 end
-
-# ╔═╡ c26f3ba4-6f9f-481c-809e-beb79fbe4ae4
-md"""
-###### Exemple d'utilisation"""
-
-# ╔═╡ 1b924b80-7a08-406a-b8ec-caa56c0d0f09
-md"""
-```julia
-edges_bayg29, weights_bayg29 = read_edges(read_header("instances/stsp/bayg29.tsp"), "instances/stsp/bayg29.tsp")
 ```
 """
-
-# ╔═╡ 4c403f99-5aa0-4b2a-9f3b-1777331ea4c7
-md"""
-```julia
-edges_bayg29
-406-element Vector{Any}:
- (1, 2)
- (1, 3)
- (1, 4)
- (1, 5)
- (1, 6)
- (1, 7)
- (1, 8)
- (1, 9)
- (1, 10)
- ⋮
- (25, 27)
- (25, 28)
- (25, 29)
- (26, 27)
- (26, 28)
- (26, 29)
- (27, 28)
- (27, 29)
- (28, 29)
-```
-"""
-
-# ╔═╡ aa11233e-704d-4667-a859-fe0375ac2447
-md"""
-```julia
-weights_bayg29
-406-element Vector{Any}:
-  97.0
- 205.0
- 139.0
-  86.0
-  60.0
- 220.0
-  65.0
- 111.0
- 115.0
-   ⋮
- 120.0
- 205.0
- 270.0
- 213.0
- 145.0
-  36.0
-  94.0
- 217.0
- 162.0
-```
-"""
-
-# ╔═╡ 0db94498-4b73-4d73-b9f1-4af2783db28d
-md""" on vérifie que les deux listes ont la même longueur."""
 
 # ╔═╡ 613362b9-ce0d-4d74-a1e3-8e88a0859249
 md"""
-##### 6. Fournir un programme principal qui lit une instance de TSP symétrique dont les poids sont donnés au format EXPLICIT et construit un objet de type Graph correspondant.
+##### 5. Accompagner votre code de tests unitaires ;
 
 """
 
 # ╔═╡ 31731546-f972-4e36-8508-623ab6ff257e
 md"""
-###### a. D'abord on commence par ecrire une fonction qui permet de construire un vecteur de noeuds étant donné un dictionnaire de noeud renvoyée par read_nodes 
+###### Grace au package Test, on fait les tests suivants su l'exemple du cours:
 
+"""
+
+# ╔═╡ e4f5b0ae-773a-4dae-ab00-78e5715195e4
+md"""
+```julia
+# Exemple d'utilisation
+node1 = Node("A", 1)
+node2 = Node("B", 2)
+node3 = Node("C", 3)
+node4 = Node("D", 4)
+node5 = Node("E", 4)
+node6 = Node("F", 4)
+node7 = Node("G", 4)
+node8 = Node("H", 4)
+node9 = Node("I", 4)
+
+edge1 = Edge("AB", node1, node2, 4)
+edge2 = Edge("BC", node2, node3, 8)
+edge3 = Edge("CD", node3, node4, 7)
+edge4 = Edge("DE", node4, node5, 9)
+edge5 = Edge("EF", node5, node6, 10)
+edge6 = Edge("FC", node6, node3, 4)
+edge7 = Edge("FG", node6, node7, 2)
+edge8 = Edge("GI", node9, node7, 6)
+edge9 = Edge("HG", node8, node7, 1)
+edge10 = Edge("HI", node8, node9, 7)
+edge11 = Edge("HA", node8, node1, 8)
+edge12 = Edge("HB", node8, node2, 11)
+edge13 = Edge("DF", node6, node4, 14)
+edge14 = Edge("IC", node9, node3, 2)
+
+nodes_g = [node1, node2, node3, node4, node5, node6, node7, node8, node9]
+edges_g = [edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edge10, edge11, edge12, edge13, edge14]
+
+graph_g = Graph("Test Graph", nodes_g, edges_g)
+```
 """
 
 # ╔═╡ 22ac3ee9-240c-4ce4-b715-f39d2cfa3d19
 md"""
 ```julia
-function convert_to_node(nodes)
-    vect_nodes = []  # Crée un tableau vide pour stocker les nœuds résultants
+using Test
+# Définissez des tests unitaires pour les structures
+@testset "Node, Edge, and Graph Tests" begin
+    @test node1.name == "A"
+    @test node1.data == 1
+    @test typeof(node1.data) == Int64
     
-    # Parcourt chaque paire clé-valeur dans le dictionnaire 'nodes'
-    for (key, value) in nodes
-        # Crée un nouveau nœud (Node) en utilisant la clé (convertie en chaîne) et la valeur
-        node = Node(string(key), value)
-        
-        # Ajoute le nœud à 'vect_nodes'
-        push!(vect_nodes, node)
-    end
+    @test edge1.name == "AB"
+    @test edge1.node1 == node1
+    @test edge1.node2 == node2
+    @test edge1.weight == 4
+    @test typeof(edge1.weight) == Int64
     
-    # Retourne un tableau de type Vector contenant les nœuds créés
-    return Vector{typeof(vect_nodes[1])}(vect_nodes)
+    @test graph_g.name == "Test Graph"
+    @test graph_g.nodes == nodes_g
+    @test graph_g.edges == edges_g
+    @test typeof(graph_g.name) == String
+
+	mst_prim, total_weight_prim = prim(graph_g)
+    mst_kruuskal, total_weight_kruskal = kruskal(graph_g)
+    @test total_weight_prim == total_weight_kruskal
+    @test total_weight_prim == 37 # Le total_weight de la solution de l'exemple du cours
 end
+
 ```
 """
 
-# ╔═╡ d6bda406-8816-498a-ba04-a44ee55b22f8
-md"""
-###### b. Ensuite on écrit une fonction qui permet de construire une arrete étant donné les arretes renvoyées par read_edges
-
-"""
-
-# ╔═╡ eeb72bd5-07e6-4929-ae86-75b558b9faea
+# ╔═╡ 37a77e33-d9ce-48b4-9934-ad41c84a0a6e
 md"""
 ```julia
-function convert_to_edge(edge, weight, nodes)
-    # Récupère les nœuds correspondants aux indices edge[1] et edge[2] à partir du tableau de nœuds 'nodes'
-    node1 = nodes[edge[1]]
-    node2 = nodes[edge[2]]
-    
-    # Crée une nouvelle arête (Edge) avec une clé au format "node1-node2", les nœuds node1 et node2, et le poids spécifié
-    edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
-    
-    # Retourne l'arête créée
-    return edge
-end
-```
-"""
-
-# ╔═╡ c4967e1a-6819-4c22-a9c6-755292f82096
-md"""
-###### c. Enfin on écrit une fonction qui permet de generer les noeuds dans le cas où l'instance ne contient pas un data pour les noeuds, par défaut on fixe les nodes.data = 0
-
-"""
-
-# ╔═╡ d94e7200-a865-43a3-b925-16d8f5bb77eb
-md"""
-```julia
-function generate_nodes(dim)
-    vect_nodes = []  # Crée un tableau vide pour stocker les nœuds résultants
-    
-    # Parcourt les entiers de 1 à 'dim' inclus
-    for i = 1:dim
-        # Crée un nouveau nœud (Node) avec une clé basée sur la valeur de 'i' et une data oar défaut de 0
-        node = Node(string(i), 0)
-        
-        # Ajoute le nœud à 'vect_nodes'
-        push!(vect_nodes, node)
-    end
-    
-    # Retourne un tableau de type Vector contenant les nœuds créés
-    return Vector{typeof(vect_nodes[1])}(vect_nodes)
-end
-```
-"""
-
-# ╔═╡ 6bec5999-67ea-4a77-aa24-e605e705330e
-md"""
-###### d. Voici la fonction qui generer graph_from_instance
-
-"""
-
-# ╔═╡ 679ccaae-cfa5-40ac-babd-f41dba2237b6
-md"""
-```julia
-function graph_from_instance(filename::String)
-    # Lecture de l'en-tête du fichier et extraction de la dimension et des arêtes
-    header = read_header(filename)
-    dim = parse(Int, header["DIMENSION"])
-    edges_inst, weights_inst = read_edges(header, filename)
-
-    # Vérification du type de données d'affichage et génération des nœuds en conséquence
-    if header["DISPLAY_DATA_TYPE"] == "None"
-        nodes = generate_nodes(dim)
-    else
-        nodes_inst = read_nodes(header, filename)
-        nodes = convert_to_node(nodes_inst)
-    end
-
-    # Conversion de la première arête et création du graphe initial
-    edge = convert_to_edge(edges_inst[1], weights_inst[1], nodes)
-    graph = Graph(header["NAME"], nodes, [edge])
-
-    # Ajout des arêtes restantes au graphe
-    if length(edges_inst) > 1
-        for i = 2:length(edges_inst)
-            edges = convert_to_edge(edges_inst[i], weights_inst[i], nodes)
-            add_edge!(graph, edges)
-        end
-    end
-
-    return graph
-end
+Test Summary:               | Pass  Total  Time
+Node, Edge, and Graph Tests |   14     14  0.0s
+Test.DefaultTestSet("Node, Edge, and Graph Tests", Any[], 14, false, false, true, 1.699310453113274e9, 1.699310453116649e9)
 ```
 """
 
@@ -519,38 +348,27 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─c49caeea-0bdd-4cd3-8e50-c739befecd98
 # ╟─2ca058c6-5f4b-47d1-9282-a8803eaf19c5
 # ╟─d16af9e4-e9fd-49df-97e4-b6af7193d63f
-# ╠═5b9924f3-f260-40be-8144-53d4fd3e0645
-# ╠═905d4a8a-9d15-45b3-8e3a-ffb33cd835b3
-# ╠═3c45416e-9c54-48fe-9e63-edcb49afd27c
-# ╠═d670b6ea-a115-4a5a-bf9e-0179b05fb447
+# ╟─5b9924f3-f260-40be-8144-53d4fd3e0645
+# ╟─905d4a8a-9d15-45b3-8e3a-ffb33cd835b3
+# ╟─3c45416e-9c54-48fe-9e63-edcb49afd27c
+# ╟─d670b6ea-a115-4a5a-bf9e-0179b05fb447
 # ╟─30df8065-0dec-4125-837c-4e12b63cd188
 # ╟─6b0d03bb-47fb-4964-a205-9212a3b3e0a8
 # ╟─1116fc1c-5012-429e-a922-3d71fb8cff1d
 # ╟─99da20b1-de32-4c69-88a7-bb2e9fbbc787
 # ╟─21bcf9a6-6a3e-441e-8ba0-389d7524d647
-# ╠═99ae39f7-ab7c-4516-9c76-1992eab8c356
+# ╟─99ae39f7-ab7c-4516-9c76-1992eab8c356
 # ╟─745a99fb-4d60-4b47-8bcf-2625063e44d8
-# ╠═790f95ac-38f5-4546-8503-8a969aa33918
-# ╠═53452089-7f8a-4fc1-871b-1313e866436f
-# ╠═b986cefa-821b-47aa-93c3-b1a9422812db
-# ╟─9ec73446-5542-4c64-ace1-09f004285f91
+# ╟─d59015cb-e1f7-4f9e-9a21-180eff8e4b77
+# ╟─790f95ac-38f5-4546-8503-8a969aa33918
+# ╟─53452089-7f8a-4fc1-871b-1313e866436f
+# ╟─b1d5add3-ac8d-402c-902e-8567891374aa
 # ╟─723b6ebd-36be-4ea0-9669-ea9250592d78
 # ╟─08300d8f-c079-4a2e-a102-b70f567f439c
-# ╟─c8b75398-f53c-40ad-8124-0949ecef02e1
-# ╟─e22a9bd2-3692-4ef2-af7b-2136c82edf09
-# ╟─c26f3ba4-6f9f-481c-809e-beb79fbe4ae4
-# ╟─1b924b80-7a08-406a-b8ec-caa56c0d0f09
-# ╟─4c403f99-5aa0-4b2a-9f3b-1777331ea4c7
-# ╟─aa11233e-704d-4667-a859-fe0375ac2447
-# ╟─0db94498-4b73-4d73-b9f1-4af2783db28d
 # ╟─613362b9-ce0d-4d74-a1e3-8e88a0859249
 # ╟─31731546-f972-4e36-8508-623ab6ff257e
+# ╟─e4f5b0ae-773a-4dae-ab00-78e5715195e4
 # ╟─22ac3ee9-240c-4ce4-b715-f39d2cfa3d19
-# ╟─d6bda406-8816-498a-ba04-a44ee55b22f8
-# ╟─eeb72bd5-07e6-4929-ae86-75b558b9faea
-# ╟─c4967e1a-6819-4c22-a9c6-755292f82096
-# ╟─d94e7200-a865-43a3-b925-16d8f5bb77eb
-# ╟─6bec5999-67ea-4a77-aa24-e605e705330e
-# ╟─679ccaae-cfa5-40ac-babd-f41dba2237b6
+# ╟─37a77e33-d9ce-48b4-9934-ad41c84a0a6e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
