@@ -115,9 +115,9 @@ graph_g = Graph("Example Graph", nodes_g, edges_g)
 # end
 # println("Total Weight: ", total_weight_g)
 
-gr17 = graph_from_instance("instances/stsp/gr17.tsp");
-mst, tt = kruskal(gr17)
-for edge in mst
-     println("Edge: ", edge.name, ", Weight: ", edge.weight)
- end
- println("Total Weight: ", tt)
+# gr17 = graph_from_instance("instances/stsp/gr17.tsp");
+# mst, tt = kruskal(gr17)
+# for edge in mst
+#      println("Edge: ", edge.name, ", Weight: ", edge.weight)
+#  end
+#  println("Total Weight: ", tt)

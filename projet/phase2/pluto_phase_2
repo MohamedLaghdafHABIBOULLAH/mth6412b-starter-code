@@ -166,6 +166,38 @@ md"""
 ##### 4. Implémenter l’algorithme de Prim vu au laboratoire et le tester sur l’exemple des notes de cours.
 """
 
+# ╔═╡ 1c99fb27-3589-42ca-af1f-486879c86f6d
+md""" D'abord on redefinit la structure de la file de priorité vue a cours et on adapte popfirst afin de retourner l'élément de la file des edges ayant le plus petit weight.
+"""
+
+# ╔═╡ 33d2cc6e-a883-47fd-b764-3de3660e196a
+"""Type abstrait de file"""
+abstract type AbstractQueue{T} end
+
+# ╔═╡ 9ee1290d-9fce-468a-b364-094f52d4d57b
+"""File de priorité."""
+mutable struct PriorityQueue{T} <: AbstractQueue{T}
+    items::Vector{T}
+end
+
+# ╔═╡ 1af7b767-79f7-4dec-81d4-eed06e4d7bac
+"""Retire et renvoie l'élément ayant la plus haute priorité. ici c'est le minimum weight"""
+function popfirst!(q::PriorityQueue)
+    highest = q.items[1]
+    for item in q.items[2:end]
+        if item.weight < highest.weight
+            highest = item
+        end
+    end
+    idx = findall(x -> x == highest, q.items)[1]
+    deleteat!(q.items, idx)
+    highest
+end
+
+# ╔═╡ 79a0db60-7bc5-47c9-bbea-f18743e54342
+md""" Ensuite l'implémentation comme sit:
+"""
+
 # ╔═╡ 08300d8f-c079-4a2e-a102-b70f567f439c
 md"""
 ```julia
@@ -361,9 +393,14 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─745a99fb-4d60-4b47-8bcf-2625063e44d8
 # ╟─d59015cb-e1f7-4f9e-9a21-180eff8e4b77
 # ╟─790f95ac-38f5-4546-8503-8a969aa33918
-# ╟─53452089-7f8a-4fc1-871b-1313e866436f
+# ╠═53452089-7f8a-4fc1-871b-1313e866436f
 # ╟─b1d5add3-ac8d-402c-902e-8567891374aa
 # ╟─723b6ebd-36be-4ea0-9669-ea9250592d78
+# ╟─1c99fb27-3589-42ca-af1f-486879c86f6d
+# ╟─33d2cc6e-a883-47fd-b764-3de3660e196a
+# ╠═9ee1290d-9fce-468a-b364-094f52d4d57b
+# ╠═1af7b767-79f7-4dec-81d4-eed06e4d7bac
+# ╟─79a0db60-7bc5-47c9-bbea-f18743e54342
 # ╟─08300d8f-c079-4a2e-a102-b70f567f439c
 # ╟─613362b9-ce0d-4d74-a1e3-8e88a0859249
 # ╟─31731546-f972-4e36-8508-623ab6ff257e

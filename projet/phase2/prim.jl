@@ -90,11 +90,11 @@ edges_g = [edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edge10
 
 graph_g = Graph("Example Graph", nodes_g, edges_g)
 
-mst, tw = prim(graph_g)
-for edge in mst
-    println("Edge: ", edge.name, ", Weight: ", edge.weight)
-end
-println("Total Weight: ", tw)
+# mst, tw = prim(graph_g)
+# for edge in mst
+#     println("Edge: ", edge.name, ", Weight: ", edge.weight)
+# end
+# println("Total Weight: ", tw)
 
 # gr17 = graph_from_instance("instances/stsp/gr17.tsp");
 # mst, tw = prim(gr17)
