@@ -44,7 +44,7 @@ md"""
 ```julia
 mutable struct Preds
     parent::Dict{String, String}
-    Rank::Dict{String, Int}
+    Rank::Dict{String, Int} # cet attribut sera utile pour les heuristiques
 end
 ```
 """
@@ -497,7 +497,7 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╠═1af7b767-79f7-4dec-81d4-eed06e4d7bac
 # ╟─79a0db60-7bc5-47c9-bbea-f18743e54342
 # ╟─08300d8f-c079-4a2e-a102-b70f567f439c
-# ╠═613362b9-ce0d-4d74-a1e3-8e88a0859249
+# ╟─613362b9-ce0d-4d74-a1e3-8e88a0859249
 # ╟─31731546-f972-4e36-8508-623ab6ff257e
 # ╟─e4f5b0ae-773a-4dae-ab00-78e5715195e4
 # ╟─22ac3ee9-240c-4ce4-b715-f39d2cfa3d19
