@@ -150,11 +150,11 @@ md"""
 
 # ╔═╡ 790f95ac-38f5-4546-8503-8a969aa33918
 md"""
-###### a. Montrer que le rang d’un nœud sera toujours inférieur à |S | − 1. Montrer ensuite que ce rang sera en fait toujours inférieur à ⌊log2(|S|)⌋;
+###### b. Montrer que le rang d’un nœud sera toujours inférieur à |S | − 1. Montrer ensuite que ce rang sera en fait toujours inférieur à ⌊log2(|S|)⌋;
 """
 
 # ╔═╡ 53452089-7f8a-4fc1-871b-1313e866436f
-md""" On sait qu'au pire des cas on aura une liste chainée du premier parent au dernier noeud et puisque le rang incrémente de 1 lors de l'ajout d'un noeud au pire des cas alors rang(s) inférieur à |S | − 1 pour tout noeud s.
+md""" On sait qu'au pire des cas on aura une liste chainée du premier parent au dernier noeud et puisque le rang incrémente de 1 lors de l'ajout d'un noeud alors rang(s) inférieur à |S | − 1 pour tout noeud s.
 """
 
 # ╔═╡ b1d5add3-ac8d-402c-902e-8567891374aa
@@ -261,7 +261,7 @@ md"""
 
 # ╔═╡ 31731546-f972-4e36-8508-623ab6ff257e
 md"""
-###### Grace au package Test, on fait les tests suivants su l'exemple du cours:
+ Grace au package Test, on crée les tests unitaires suivants en considérant l'exemple du cours:
 
 """
 
@@ -506,6 +506,6 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─65bbf98d-9519-4360-b4bb-513320b5aa3d
 # ╟─ada97268-87fd-4a67-8d7f-994629a0ff53
 # ╟─ebbad467-0d2f-4ce5-a9d9-4396febae1ac
-# ╠═6ac94edd-35ac-4163-b442-f065f9ef5f0e
+# ╟─6ac94edd-35ac-4163-b442-f065f9ef5f0e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
