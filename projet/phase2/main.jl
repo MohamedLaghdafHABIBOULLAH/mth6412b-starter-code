@@ -1,4 +1,4 @@
-include("../phase2/connexe.jl")
+include("../phase2/kruskal.jl")
 include("../phase2/prim.jl")
 
 
