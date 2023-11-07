@@ -158,7 +158,7 @@ md""" On sait qu'au pire des cas on aura une liste chainée du premier parent au
 """
 
 # ╔═╡ b1d5add3-ac8d-402c-902e-8567891374aa
-md""" D'autre part, pour incrémenter le rang dans les pires des cas, on aura à fusionner deus enselbles de noeuds de même nombre donc on a 2^(rang(s)) < |S , d'où le résultat.
+md""" D'autre part, pour incrémenter le rang, chaque union doit impliquer au moins la duplication de la taille de l'ensemble. Cela signifie que le nombre d'éléments dans l'ensemble est multiplié par 2 à chaque étape et donc on a 2^(rang(s)) < |S| , d'où le résultat.
 """
 
 # ╔═╡ 723b6ebd-36be-4ea0-9669-ea9250592d78
@@ -432,11 +432,8 @@ BenchmarkTools.Trial: 45 samples with 1 evaluation.
 """
 
 # ╔═╡ 6ac94edd-35ac-4163-b442-f065f9ef5f0e
-md""" dd
+md""" On remarque que l'algorithme Prim fait beaucoup d'allocations et ceci pourrait etre du au fait que lors de la boucle sur les edges on vérifie à chaque fois si l'ajout de l'arrete au noeud selected forme un cycle ou pas, cependant les solutions semblent etre corrects et comparables aux solutions données dans le fichier solutions_stsp.txt
 """
-
-# ╔═╡ 3b5ba3bf-8cb3-44ef-9d3c-0696dbf8a139
-
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -491,7 +488,7 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─745a99fb-4d60-4b47-8bcf-2625063e44d8
 # ╟─d59015cb-e1f7-4f9e-9a21-180eff8e4b77
 # ╟─790f95ac-38f5-4546-8503-8a969aa33918
-# ╠═53452089-7f8a-4fc1-871b-1313e866436f
+# ╟─53452089-7f8a-4fc1-871b-1313e866436f
 # ╟─b1d5add3-ac8d-402c-902e-8567891374aa
 # ╟─723b6ebd-36be-4ea0-9669-ea9250592d78
 # ╟─1c99fb27-3589-42ca-af1f-486879c86f6d
@@ -510,6 +507,5 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─ada97268-87fd-4a67-8d7f-994629a0ff53
 # ╟─ebbad467-0d2f-4ce5-a9d9-4396febae1ac
 # ╠═6ac94edd-35ac-4163-b442-f065f9ef5f0e
-# ╠═3b5ba3bf-8cb3-44ef-9d3c-0696dbf8a139
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
