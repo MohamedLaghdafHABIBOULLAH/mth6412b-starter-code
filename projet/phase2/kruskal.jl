@@ -31,7 +31,7 @@ function find(pred::Preds, node_name)
     return pred.parent[node_name]
 end
 
-# Fonction union pour fusionner les composantes connexes des 2 noeuds (dire qu'ils ont le même parent)
+# Fonction union pour fusionner les composantes connexes des 2 noeuds (dire qu'ils ont le même parent) avec heuristique rank
 function union_rank(pred::Preds, node1_name, node2_name)
     root1 = find(pred, node1_name)
     root2 = find(pred, node2_name)
@@ -56,6 +56,33 @@ function union(pred::Preds, node1_name, node2_name)
     end
 end
 
+# Fonction union pour fusionner les composantes connexes des 2 noeuds (dire qu'ils ont le même parent) avec heuristique compression de chemins
+function union_comp(pred::Preds, node1_name, node2_name, g_nodes)
+    root1 = find(pred,node1_name)
+    root2 = find(pred,node2_name)
+    if root1 == node1_name && root2 == node2_name && root1 != root2
+        pred.parent[root2] = root1
+        for nodes in g_nodes[:]
+            if find(pred,nodes.name) == node2_name
+                pred.parent[node.name] = root1
+            end
+        end
+        elseif root1 == root2
+            elseif root1 != node1_name && root2 == node2_name && root1 != root2
+                pred.parent[root2] = root1
+                elseif root1 == node1_name && root2 != node2_name && root1 != root2
+                    pred.parent[root1] = root2
+                    elseif root1 != node1_name && root2 != node2_name && root1 != root2
+                        pred.parent[root1] = root2
+                        for nodes in g_nodes[:]
+                            if find(pred,nodes.name) == root1
+                                pred.parent[node.name] = root2
+                            end
+                        end
+
+    end
+end
+
 # Implémenter Kruskal pour le minimum_spanning_tree
 function kruskal(graph::Graph; heuristique::Symbol = :default)
     edges = sort(graph.edges, by = x -> x.weight)
@@ -68,8 +95,8 @@ function kruskal(graph::Graph; heuristique::Symbol = :default)
             push!(minimum_spanning_tree, edge)
             (heuristique == :default) && union_rank(pred, edge.node1.name, edge.node2.name)
             total_weight += edge.weight
-            #(heuristique == :rank) && union(pred, edge.node1.name, edge.node2.name)
-            #(heuristique == :comp) && union(pred, edge.node1.name, edge.node2.name)
+            (heuristique == :rank) && union(pred, edge.node1.name, edge.node2.name)
+            (heuristique == :comp) && union(pred, edge.node1.name, edge.node2.name)
           #  println(pred)
         end
     end

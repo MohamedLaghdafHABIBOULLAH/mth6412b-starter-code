@@ -18,8 +18,11 @@ md"""
 ### Mini rapport: Phase 2 du projet
 """
 
+# ╔═╡ 405b4832-dcb4-4b1a-b599-15bd8018fffc
+md""" Ulrich Baron-Fournier (2021196) """
+
 # ╔═╡ 56c69abe-5f9d-433d-87ee-ad4d14d7e4ac
-md""" Le  code se trouve au lien suivant: """
+md""" Mohamed Laghdaf Habiboullah (2300591) """
 
 # ╔═╡ c49caeea-0bdd-4cd3-8e50-c739befecd98
 md"""[https://github.com/MohamedLaghdafHABIBOULLAH/mth6412b-starter-code.git](https://github.com/MohamedLaghdafHABIBOULLAH/mth6412b-starter-code.git)"""
@@ -99,8 +102,36 @@ end
 ```
 """
 
+# ╔═╡ d819ebbb-737f-42a7-83f3-143167b41eed
+md"""
+###### Fonction Kruskal (incluant l'option qui permet de choisir l'heuristique)
+"""
+
+# ╔═╡ 0955f10a-9a63-4828-bda5-823a31738eea
+md"""
+```julia
+# Implémenter Kruskal pour le minimum_spanning_tree
+function kruskal(graph::Graph; heuristique::Symbol = :default)
+    edges = sort(graph.edges, by = x -> x.weight)
+    minimum_spanning_tree = Edge{typeof(graph.nodes[1].data)}[]
+    pred = Preds(graph.nodes)
+    total_w=0
+    for edge in edges
+        if find(pred, edge.node1.name) != find(pred, edge.node2.name) # si les noeuds font partie de composante connexe distincte
+            push!(minimum_spanning_tree, edge)
+            (heuristique == :default) && union(pred, edge.node1.name, edge.node2.name)
+            (heuristique == :rank) && union_rank(pred, edge.node1.name, edge.node2.name)
+            (heuristique == :comp) && union_comp(pred, edge.node1.name, edge.node2.name,graph.nodes)
+            total_w = total_w + edge.weight
+        end
+    end
+    return minimum_spanning_tree, total_w
+end
+```
+"""
+
 # ╔═╡ 21bcf9a6-6a3e-441e-8ba0-389d7524d647
-""" Fonction union pour fusionner les composantes connexes des 2 noeuds (dire qu'ils ont le même parent) """
+""" Fonction union (sans heuristique) pour fusionner les composantes connexes des 2 noeuds (dire qu'ils ont le même parent) """
 function union(pred::Preds, node1_name, node2_name)
     root1 = find(pred, node1_name)
     root2 = find(pred, node2_name)
@@ -122,24 +153,518 @@ end
 ```
 """
 
-# ╔═╡ 745a99fb-4d60-4b47-8bcf-2625063e44d8
+# ╔═╡ 3ab02696-69a6-404c-be24-4172a7ea79ab
+md"""
+On teste l'algorithme Kruskal (sans heuristique) sur l'exemple vu en classe et sur les instances suivantes : gr17, bayg29
+"""
+
+# ╔═╡ 695da251-f21d-441b-aa4d-994cd8c7f4ba
+md"""
+###### Exemple des notes du cours
+"""
+
+# ╔═╡ a379ca39-a884-4582-96e4-96a38578c980
 md"""
 ```julia
-# Implémenter Kruskal pour le minimum_spanning_tree
-function kruskal(graph::Graph; heuristique::Symbol = :default)
-    edges = sort(graph.edges, by = x -> x.weight)
-    minimum_spanning_tree = Edge{typeof(graph.nodes[1].data)}[]
-    pred = Preds(graph.nodes)
-    total_weight = 0.
-    for edge in edges
-        if find(pred, edge.node1.name) != find(pred, edge.node2.name) # si les noeuds font partie de composante connexe distincte
-            push!(minimum_spanning_tree, edge)
-            (heuristique == :default) && union(pred, edge.node1.name, edge.node2.name)
-            total_weight += edge.weight
-        end
+Exemple de dictionnaire final: 
+Dict("B" => "E", "A" => "D", "I" => "D", "C" => "D", "D" => "E", "G" => "E", "E" => "E", "F" => "E", "H" => "E")
+Edge: GH, Weight: 1
+Edge: FG, Weight: 2
+Edge: IC, Weight: 2
+Edge: AB, Weight: 4
+Edge: FC, Weight: 4
+Edge: CD, Weight: 7
+Edge: BC, Weight: 8
+Edge: DE, Weight: 9
+Total weight: 37
+
+julia> @benchmark kruskal(graph_g, heuristique=:default)
+BenchmarkTools.Trial: 10000 samples with 5 evaluations.
+ Range (min … max):  6.540 μs … 41.880 μs  ┊ GC (min … max): 0.00% … 0.00%
+ Time  (median):     7.000 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   7.495 μs ±  1.791 μs  ┊ GC (mean ± σ):  0.00% ± 0.00%
+
+  █▁▅▄▆▄▅▄▄▂▂      ▁▁                                        ▁
+  █████████████▇▆▆▆██▇▆▇▆█▆▆▇██▆▄▄▃▃▅▅▅▅▆▄▅▄▄▆▄▅▅▄▆▃▆▄▅▆▄▅▄▅ █
+  6.54 μs      Histogram: log(frequency) by time       16 μs <
+
+ Memory estimate: 1.52 KiB, allocs estimate: 14.
+```
+"""
+
+# ╔═╡ f8377b73-aa03-44bb-ba91-2569332e0196
+md"""
+###### Instance gr17
+"""
+
+# ╔═╡ afed9c9b-a3be-41d8-b6cf-047328115286
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("4" => "16", "1" => "16", "12" => "16", "2" => "16", "6" => "16", "11" => "16", "13" => "16", "5" => "16", "15" => "16", "16" => "16", "14" => "16", "7" => "16", "8" => "16", "17" => "16", "10" => "16", "9" => "16", "3" => "16")
+Edge: 4-13, Weight: 27.0
+Edge: 7-8, Weight: 29.0
+Edge: 7-17, Weight: 29.0
+Edge: 6-8, Weight: 34.0
+Edge: 7-13, Weight: 47.0
+Edge: 3-15, Weight: 53.0
+Edge: 14-15, Weight: 57.0
+Edge: 5-11, Weight: 61.0
+Edge: 1-13, Weight: 70.0
+Edge: 9-12, Weight: 95.0
+Edge: 14-17, Weight: 96.0
+Edge: 3-11, Weight: 110.0
+Edge: 10-11, Weight: 154.0
+Edge: 12-16, Weight: 157.0
+Edge: 4-9, Weight: 175.0
+Edge: 2-5, Weight: 227.0
+Total weight: 1421.0
+
+julia> @benchmark kruskal(gr17, heuristique=:default)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  75.300 μs …  1.142 ms  ┊ GC (min … max): 0.00% … 90.78%
+ Time  (median):     80.200 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   85.568 μs ± 21.501 μs  ┊ GC (mean ± σ):  0.12% ±  0.91%
+
+  █▇█▇▅▅▃▂▂▁▂▁▁▁▁     ▁ ▁                                     ▂
+  ███████████████▇▇█▇▆████▇▇█▅▆▇▅▇▅▆▅▆▅▆▅▆▇▇▆▆▅▅▄▅▅▄▃▆▅▄▅▄▄▅▆ █
+  75.3 μs      Histogram: log(frequency) by time       183 μs <
+
+ Memory estimate: 6.94 KiB, allocs estimate: 37.
+```
+"""
+
+# ╔═╡ 1e5565c7-3175-4787-a8ae-a97f393bf6d6
+md"""
+###### Instance bayg29
+"""
+
+# ╔═╡ b8518afd-2774-415f-be5b-aaa1673cabd9
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("24" => "13", "29" => "13", "1" => "13", "12" => "13", "4" => "13", "20" => "13", "2" => "13", "6" => "13", "25" => "13", "23" => "13", "22" => "13", "11" => "13", "13" => "13", "5" => "13", "15" => "13", "27" => "13", "28" => "13", "16" => "13", "14" => "13", "21" => "13", "7" => "13", "8" => "13", "26" => "13", "17" => 
+"13", "19" => "13", "10" => "13", "9" => "13", "18" => "13", "3" => "13")
+Edge: 10-20, Weight: 25.0
+Edge: 14-18, Weight: 32.0
+Edge: 1-28, Weight: 34.0
+Edge: 4-15, Weight: 34.0
+Edge: 14-22, Weight: 36.0
+Edge: 26-29, Weight: 36.0
+Edge: 24-27, Weight: 38.0
+Edge: 4-10, Weight: 39.0
+Edge: 8-27, Weight: 39.0
+Edge: 2-21, Weight: 41.0
+Edge: 5-9, Weight: 42.0
+Edge: 6-12, Weight: 46.0
+Edge: 17-22, Weight: 47.0
+Edge: 16-27, Weight: 48.0
+Edge: 2-20, Weight: 49.0
+Edge: 15-19, Weight: 49.0
+Edge: 5-21, Weight: 50.0
+Edge: 5-6, Weight: 51.0
+Edge: 5-26, Weight: 51.0
+Edge: 10-13, Weight: 51.0
+Edge: 1-24, Weight: 52.0
+Edge: 6-28, Weight: 52.0
+Edge: 19-25, Weight: 52.0
+Edge: 15-18, Weight: 56.0
+Edge: 3-29, Weight: 60.0
+Edge: 11-22, Weight: 63.0
+Edge: 7-25, Weight: 72.0
+Edge: 23-27, Weight: 74.0
+Total weight: 1319.0
+
+julia> @benchmark kruskal(bayg29, heuristique=:default)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  250.200 μs …  5.125 ms  ┊ GC (min … max): 0.00% … 93.67%
+ Time  (median):     272.500 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   294.466 μs ± 81.186 μs  ┊ GC (mean ± σ):  0.33% ±  1.33%
+
+  ▆▄▁ █▇▄▃▃▄▄▅▃▂▃▅▄▂▂▂▂▂▃▂▁▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁                     ▂
+  ███▅███████████████████████████████████████████▇██▇▇▅▅▆▆▆▅▄▆ █
+  250 μs        Histogram: log(frequency) by time       450 μs <
+
+ Memory estimate: 11.09 KiB, allocs estimate: 49.
+```
+"""
+
+# ╔═╡ 6df4baef-3017-48e2-a052-349538a13523
+md"""
+###### Heuristique 1: Union par rang 
+"""
+
+# ╔═╡ 48351278-3e99-4049-b165-0c32ec02e438
+""" Fonction union pour fusionner les composantes connexes en utilisant l'union par rang """
+function union_rank(pred::Preds, node1_name, node2_name)
+    root1 = find(pred, node1_name)
+    root2 = find(pred, node2_name)
+    if root1 != root2
+          if pred.Rank[root1] < pred.Rank[root2]
+               pred.parent[root1] = root2
+          elseif pred.Rank[root2] < pred.Rank[root1]
+               pred.parent[root2] = root1
+          else
+               pred.parent[root1] = root2
+               pred.Rank[root2] += 1
+          end
     end
-    return minimum_spanning_tree, total_weight
 end
+
+# ╔═╡ b0efe2a7-1a64-456b-bb43-8709015faf65
+md"""
+```julia
+function union_rank(pred::Preds, node1_name, node2_name)
+    root1 = find(pred, node1_name)
+    root2 = find(pred, node2_name)
+    if root1 != root2
+          if pred.Rank[root1] < pred.Rank[root2]
+               pred.parent[root1] = root2
+          elseif pred.Rank[root2] < pred.Rank[root1]
+               pred.parent[root2] = root1
+          else
+               pred.parent[root1] = root2
+               pred.Rank[root2] += 1
+          end
+    end
+end
+```
+"""
+
+# ╔═╡ 37111814-b59a-4759-b196-7ccd9a7d508d
+md"""
+On teste l'algorithme Kruskal (heuristique 1: union par rang) sur l'exemple vu en classe et sur les instances suivantes : gr17, bayg29
+"""
+
+# ╔═╡ a408e84d-9287-44e1-8d0d-ce81d0f29328
+md"""
+###### Exemple des notes du cours
+"""
+
+# ╔═╡ a93c3439-b514-4b3c-b9b3-43e977750eea
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("B" => "C", "A" => "C", "I" => "C", "C" => "C", "D" => "C", "G" => "C", "E" => "C", "F" => "C", "H" => "C")
+Edge: GH, Weight: 1
+Edge: FG, Weight: 2
+Edge: IC, Weight: 2
+Edge: AB, Weight: 4
+Edge: FC, Weight: 4
+Edge: CD, Weight: 7
+Edge: BC, Weight: 8
+Edge: DE, Weight: 9
+Total weight: 37
+
+julia> @benchmark kruskal(graph_g, heuristique=:rank)
+BenchmarkTools.Trial: 10000 samples with 5 evaluations.
+ Range (min … max):  6.940 μs … 40.300 μs  ┊ GC (min … max): 0.00% … 0.00%
+ Time  (median):     7.680 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   8.609 μs ±  2.552 μs  ┊ GC (mean ± σ):  0.00% ± 0.00%
+
+  ▂█▇▇▆▅▅▄▂▁      ▃▃▂▂▂▂▃▂▁             ▁                    ▂
+  ██████████▆█▆▅▇▇███████████▇▆▆▄▇▅▅▇████████▇▆▆▆▅▁▆▆▆▇▆▆▇▆▆ █
+  6.94 μs      Histogram: log(frequency) by time     19.8 μs <
+
+ Memory estimate: 1.52 KiB, allocs estimate: 14.
+```
+"""
+
+# ╔═╡ 3eb5695a-f0a5-4799-b6d5-f9573afc881b
+md"""
+###### Instance gr17
+"""
+
+# ╔═╡ 270e8ca6-1a11-4bfd-bb3d-4940a3769438
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("4" => "13", "1" => "13", "12" => "13", "2" => "13", "6" => "13", "11" => "13", "13" => "13", "5" => "13", "15" => "13", "16" => "13", "14" => "13", "7" => "13", "8" => "13", "17" => "13", "10" => "13", "9" => "13", "3" => "13")
+Edge: 4-13, Weight: 27.0
+Edge: 7-8, Weight: 29.0
+Edge: 7-17, Weight: 29.0
+Edge: 6-8, Weight: 34.0
+Edge: 7-13, Weight: 47.0
+Edge: 3-15, Weight: 53.0
+Edge: 14-15, Weight: 57.0
+Edge: 5-11, Weight: 61.0
+Edge: 1-13, Weight: 70.0
+Edge: 9-12, Weight: 95.0
+Edge: 14-17, Weight: 96.0
+Edge: 3-11, Weight: 110.0
+Edge: 10-11, Weight: 154.0
+Edge: 12-16, Weight: 157.0
+Edge: 4-9, Weight: 175.0
+Edge: 2-5, Weight: 227.0
+Total weight: 1421.0
+
+julia> @benchmark kruskal(gr17, heuristique=:rank)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  74.500 μs …  1.307 ms  ┊ GC (min … max): 0.00% … 90.66%
+ Time  (median):     79.800 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   85.481 μs ± 19.678 μs  ┊ GC (mean ± σ):  0.14% ±  0.91%
+
+  ▅▄▅█▆▆▅▄▃▁   ▂ ▁▁ ▁         ▁                               ▁
+  █████████████████████▇▇▇▆▆▇▇█████▇▆▇▅▆▆▆▆▅▆▇▆▆▄▅▅▆▅▅▅▅▆▆▅▅▆ █
+  74.5 μs      Histogram: log(frequency) by time       157 μs <
+
+ Memory estimate: 6.94 KiB, allocs estimate: 37.
+```
+"""
+
+# ╔═╡ 84a6d496-0b82-4299-8a00-345cbb94df7a
+md"""
+###### Instance bayg29
+"""
+
+# ╔═╡ 736e5009-8e28-41b6-8642-e9d8bef09c39
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("24" => "21", "29" => "21", "1" => "21", "12" => "21", "4" => "21", "20" => "21", "2" => "21", "6" => "21", "25" => "21", "23" => "21", "22" => "21", "11" => "21", "13" => "21", "5" => "21", "15" => "21", "27" => "21", "28" => "21", "16" => "21", "14" => "21", "21" => "21", "7" => "21", "8" => "21", "26" => "21", "17" => 
+"21", "19" => "21", "10" => "21", "9" => "21", "18" => "21", "3" => "21")
+Edge: 10-20, Weight: 25.0
+Edge: 14-18, Weight: 32.0
+Edge: 1-28, Weight: 34.0
+Edge: 4-15, Weight: 34.0
+Edge: 14-22, Weight: 36.0
+Edge: 26-29, Weight: 36.0
+Edge: 24-27, Weight: 38.0
+Edge: 4-10, Weight: 39.0
+Edge: 8-27, Weight: 39.0
+Edge: 2-21, Weight: 41.0
+Edge: 5-9, Weight: 42.0
+Edge: 6-12, Weight: 46.0
+Edge: 17-22, Weight: 47.0
+Edge: 16-27, Weight: 48.0
+Edge: 2-20, Weight: 49.0
+Edge: 15-19, Weight: 49.0
+Edge: 5-21, Weight: 50.0
+Edge: 5-6, Weight: 51.0
+Edge: 5-26, Weight: 51.0
+Edge: 10-13, Weight: 51.0
+Edge: 1-24, Weight: 52.0
+Edge: 6-28, Weight: 52.0
+Edge: 19-25, Weight: 52.0
+Edge: 15-18, Weight: 56.0
+Edge: 3-29, Weight: 60.0
+Edge: 11-22, Weight: 63.0
+Edge: 7-25, Weight: 72.0
+Edge: 23-27, Weight: 74.0
+Total weight: 1319.0
+
+julia> @benchmark kruskal(bayg29, heuristique=:rank)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  251.400 μs …  4.372 ms  ┊ GC (min … max): 0.00% … 93.06%
+ Time  (median):     274.950 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   299.512 μs ± 85.942 μs  ┊ GC (mean ± σ):  0.27% ±  1.32%
+
+  ▅▁█▆▄▄▃▅▃▄▃▂▂▂▂▂▁▁▂▁▁▁                                       ▂
+  █████████████████████████▇▇▇▆▅▅▃▅▅▅▅▅▄▅▄▄▂▄▄▂▂▃▂▂▂▄▂▂▄▅▄▄▅▄▇ █
+  251 μs        Histogram: log(frequency) by time       660 μs <
+
+ Memory estimate: 11.09 KiB, allocs estimate: 49.
+```
+"""
+
+# ╔═╡ a015d3f2-ca55-4306-afdd-8f29c07724c5
+md"""
+###### Heuristique 2: Compression des chemins 
+"""
+
+# ╔═╡ b799f7f6-5abc-47cf-b981-f97d9496de47
+""" Fonction union pour fusionner les composantes connexes en utilisant la compression des chemins """
+function union_comp(pred::Preds, node1_name, node2_name, g_nodes)
+    root1 = find(pred,node1_name)
+    root2 = find(pred,node2_name)
+    if root1 == node1_name && root2 == node2_name && root1 != root2
+        pred.parent[root2] = root1
+        for nodes in g_nodes[:]
+            if find(pred,nodes.name) == node2_name
+                pred.parent[node.name] = root1
+            end
+        end
+        elseif root1 == root2
+            elseif root1 != node1_name && root2 == node2_name && root1 != root2
+                pred.parent[root2] = root1
+                elseif root1 == node1_name && root2 != node2_name && root1 != root2
+                    pred.parent[root1] = root2
+                    elseif root1 != node1_name && root2 != node2_name && root1 != root2
+                        pred.parent[root1] = root2
+                        for nodes in g_nodes[:]
+                            if find(pred,nodes.name) == root1
+                                pred.parent[node.name] = root2
+                            end
+                        end
+
+    end
+end
+
+
+# ╔═╡ f247a574-b6d4-4257-85f0-476ed96eb43a
+md"""
+```julia
+function union_comp(pred::Preds, node1_name, node2_name, g_nodes)
+    root1 = find(pred,node1_name)
+    root2 = find(pred,node2_name)
+    if root1 == node1_name && root2 == node2_name && root1 != root2
+        pred.parent[root2] = root1
+        for nodes in g_nodes[:]
+            if find(pred,nodes.name) == node2_name
+                pred.parent[node.name] = root1
+            end
+        end
+        elseif root1 == root2
+            elseif root1 != node1_name && root2 == node2_name && root1 != root2
+                pred.parent[root2] = root1
+                elseif root1 == node1_name && root2 != node2_name && root1 != root2
+                    pred.parent[root1] = root2
+                    elseif root1 != node1_name && root2 != node2_name && root1 != root2
+                        pred.parent[root1] = root2
+                        for nodes in g_nodes[:]
+                            if find(pred,nodes.name) == root1
+                                pred.parent[node.name] = root2
+                            end
+                        end
+
+    end
+end
+```
+"""
+
+# ╔═╡ ac4f5042-2cbb-4f61-8bcb-677b6c47d914
+md"""
+On teste l'algorithme Kruskal (heuristique 2: compression des chemins) sur l'exemple vu en classe et sur les instances suivantes : gr17, bayg29
+"""
+
+# ╔═╡ 4d3b1bc4-cec5-42fa-85f3-be9e80f68292
+md"""
+###### Exemple des notes du cours
+"""
+
+# ╔═╡ b48defab-6c6f-4e56-b90d-484a6f884df7
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("B" => "I", "A" => "I", "I" => "I", "C" => "I", "D" => "I", "G" => "I", "E" => "I", "F" => "I", "H" => "I")
+Edge: GH, Weight: 1
+Edge: FG, Weight: 2
+Edge: IC, Weight: 2
+Edge: AB, Weight: 4
+Edge: FC, Weight: 4
+Edge: CD, Weight: 7
+Edge: BC, Weight: 8
+Edge: DE, Weight: 9
+Total weight: 37
+
+julia> @benchmark kruskal(graph_g, heuristique=:comp)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  11.300 μs … 69.400 μs  ┊ GC (min … max): 0.00% … 0.00%
+ Time  (median):     12.200 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   13.344 μs ±  4.243 μs  ┊ GC (mean ± σ):  0.00% ± 0.00%
+
+  █▆▆▃▆▄▄▃▄▄▂▂▂▁                                              ▂
+  ██████████████▇██▆▆▆▄▄▄▃▃▃▄▄▁▁▁▁▁▁▄▆███▇▇▇▅▅▆▅▆▄▅▅▇█▇▇▆▇▅▅▇ █
+  11.3 μs      Histogram: log(frequency) by time      33.5 μs <
+
+ Memory estimate: 2.14 KiB, allocs estimate: 19.
+```
+"""
+
+# ╔═╡ 4ae352eb-3048-44a4-99e3-d16a3ce98016
+md"""
+###### Instance gr17
+"""
+
+# ╔═╡ a1573a5c-58b3-41c7-816e-e07e6bfcb02e
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("4" => "2", "1" => "2", "12" => "2", "2" => "2", "6" => "2", "11" => "2", "13" => "2", "5" => "2", "15" => "2", "16" => "2", "14" => "2", "7" => "2", "8" => "2", "17" => "2", "10" => "2", "9" => "2", "3" => "2")
+Edge: 4-13, Weight: 27.0
+Edge: 7-8, Weight: 29.0
+Edge: 7-17, Weight: 29.0
+Edge: 6-8, Weight: 34.0
+Edge: 7-13, Weight: 47.0
+Edge: 3-15, Weight: 53.0
+Edge: 14-15, Weight: 57.0
+Edge: 5-11, Weight: 61.0
+Edge: 1-13, Weight: 70.0
+Edge: 9-12, Weight: 95.0
+Edge: 14-17, Weight: 96.0
+Edge: 3-11, Weight: 110.0
+Edge: 10-11, Weight: 154.0
+Edge: 12-16, Weight: 157.0
+Edge: 4-9, Weight: 175.0
+Edge: 2-5, Weight: 227.0
+Total weight: 1421.0
+
+julia> @benchmark kruskal(gr17, heuristique=:comp)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):   88.800 μs …  1.244 ms  ┊ GC (min … max): 0.00% … 91.11%
+ Time  (median):      94.500 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   100.717 μs ± 26.421 μs  ┊ GC (mean ± σ):  0.21% ±  1.28%
+
+  █▃▄▅▅▅▅▄▃▂▁▁▁▂       ▂       ▂                               ▁
+  ████████████████▇██▇▅█▇████▇▇█▆▆▆▆▆▆▅▇▆▆▆▇▆▆▆▇▅▅▅▆▅▄▅▅▅▆▅▄▅▄ █
+  88.8 μs       Histogram: log(frequency) by time       192 μs <
+
+ Memory estimate: 8.62 KiB, allocs estimate: 46.
+```
+"""
+
+# ╔═╡ 871d1fe1-b228-4cbe-9ad1-951dbb0a3c0b
+md"""
+###### Instance bayg29
+"""
+
+# ╔═╡ 22900c46-61d6-491b-9f96-79163e0c53d3
+md"""
+```julia
+Exemple de dictionnaire final: 
+Dict("24" => "11", "29" => "11", "1" => "11", "12" => "11", "4" => "11", "20" => "11", "2" => "11", "6" => "11", "25" => "11", "23" => "11", "22" => "11", "11" => "11", "13" => "11", "5" => "11", "15" => "11", "27" => "11", "28" => "11", "16" => "11", "14" => "11", "21" => "11", "7" => "11", "8" => "11", "26" => "11", "17" => 
+"11", "19" => "11", "10" => "11", "9" => "11", "18" => "11", "3" => "11")
+Edge: 10-20, Weight: 25.0
+Edge: 14-18, Weight: 32.0
+Edge: 1-28, Weight: 34.0
+Edge: 4-15, Weight: 34.0
+Edge: 14-22, Weight: 36.0
+Edge: 26-29, Weight: 36.0
+Edge: 24-27, Weight: 38.0
+Edge: 4-10, Weight: 39.0
+Edge: 8-27, Weight: 39.0
+Edge: 2-21, Weight: 41.0
+Edge: 5-9, Weight: 42.0
+Edge: 6-12, Weight: 46.0
+Edge: 17-22, Weight: 47.0
+Edge: 16-27, Weight: 48.0
+Edge: 2-20, Weight: 49.0
+Edge: 15-19, Weight: 49.0
+Edge: 5-21, Weight: 50.0
+Edge: 5-6, Weight: 51.0
+Edge: 5-26, Weight: 51.0
+Edge: 10-13, Weight: 51.0
+Edge: 1-24, Weight: 52.0
+Edge: 6-28, Weight: 52.0
+Edge: 19-25, Weight: 52.0
+Edge: 15-18, Weight: 56.0
+Edge: 3-29, Weight: 60.0
+Edge: 11-22, Weight: 63.0
+Edge: 7-25, Weight: 72.0
+Edge: 23-27, Weight: 74.0
+Total weight: 1319.0
+
+julia> @benchmark kruskal(bayg29, heuristique=:comp)
+BenchmarkTools.Trial: 10000 samples with 1 evaluation.
+ Range (min … max):  283.600 μs …  3.323 ms  ┊ GC (min … max): 0.00% … 90.53%
+ Time  (median):     303.100 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   320.303 μs ± 65.389 μs  ┊ GC (mean ± σ):  0.19% ±  1.28%
+
+  █▆▄ ▇▇▆▄▃▂▅▃▂▂▄▃▁ ▁▁ ▁ ▁▂▂▁   ▁ ▁▁▂▁  ▁▂▁                    ▂
+  ████████████████████████████████████▇▇███▇▇▇▇▆▆▆▅▅▇▅▄▆▅▅▆▄▅▅ █
+  284 μs        Histogram: log(frequency) by time       507 μs <
+
+ Memory estimate: 15.03 KiB, allocs estimate: 63.
 ```
 """
 
@@ -268,7 +793,7 @@ md"""
 # ╔═╡ e4f5b0ae-773a-4dae-ab00-78e5715195e4
 md"""
 ```julia
-# Exemple d'utilisation
+# Exemple d'utilisation (exemple des notes du cours)
 node1 = Node("A", 1)
 node2 = Node("B", 2)
 node3 = Node("C", 3)
@@ -432,7 +957,7 @@ BenchmarkTools.Trial: 45 samples with 1 evaluation.
 """
 
 # ╔═╡ 6ac94edd-35ac-4163-b442-f065f9ef5f0e
-md""" On remarque que l'algorithme Prim fait beaucoup d'allocations et ceci pourrait etre du au fait que lors de la boucle sur les edges on vérifie à chaque fois si l'ajout de l'arrete au noeud selected forme un cycle ou pas, cependant les solutions semblent etre corrects et comparables aux solutions données dans le fichier solutions_stsp.txt
+md""" On remarque que l'algorithme Prim fait beaucoup d'allocations et ceci pourrait etre du au fait que lors de la boucle sur les edges on vérifie à chaque fois si l'ajout de l'arrete au noeud selected forme un cycle ou pas, cependant les solutions semblent etre corrects et comparables aux solutions données dans le fichier solutions_stsp.txt. En ce qui concerne la comparaison ente les heuristiques, on ne voit pas d'amélioration des caractéristiques analysées en utilisant benchmark lors de l'utilisation d'heuristique comparativement à sans heuristique (même un plus grande mémoire utilisée et plus allocation pour l'heuristique 2: compression des chemins). Cependant, la nature du graph connexe final est bel et bien différente d'une heuristique à l'autre.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -471,6 +996,7 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╠═5dfaa4bb-f544-43df-a390-a9e326784fed
 # ╠═7ea81498-700d-4402-bea4-37b5203d088f
 # ╟─5b0505f0-ab35-4ebc-9458-1914a54c7bfa
+# ╟─405b4832-dcb4-4b1a-b599-15bd8018fffc
 # ╟─56c69abe-5f9d-433d-87ee-ad4d14d7e4ac
 # ╟─c49caeea-0bdd-4cd3-8e50-c739befecd98
 # ╟─2ca058c6-5f4b-47d1-9282-a8803eaf19c5
@@ -483,9 +1009,37 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─6b0d03bb-47fb-4964-a205-9212a3b3e0a8
 # ╟─1116fc1c-5012-429e-a922-3d71fb8cff1d
 # ╟─99da20b1-de32-4c69-88a7-bb2e9fbbc787
+# ╟─d819ebbb-737f-42a7-83f3-143167b41eed
+# ╟─0955f10a-9a63-4828-bda5-823a31738eea
 # ╟─21bcf9a6-6a3e-441e-8ba0-389d7524d647
 # ╟─99ae39f7-ab7c-4516-9c76-1992eab8c356
-# ╟─745a99fb-4d60-4b47-8bcf-2625063e44d8
+# ╟─3ab02696-69a6-404c-be24-4172a7ea79ab
+# ╟─695da251-f21d-441b-aa4d-994cd8c7f4ba
+# ╟─a379ca39-a884-4582-96e4-96a38578c980
+# ╟─f8377b73-aa03-44bb-ba91-2569332e0196
+# ╟─afed9c9b-a3be-41d8-b6cf-047328115286
+# ╟─1e5565c7-3175-4787-a8ae-a97f393bf6d6
+# ╟─b8518afd-2774-415f-be5b-aaa1673cabd9
+# ╟─6df4baef-3017-48e2-a052-349538a13523
+# ╟─48351278-3e99-4049-b165-0c32ec02e438
+# ╟─b0efe2a7-1a64-456b-bb43-8709015faf65
+# ╟─37111814-b59a-4759-b196-7ccd9a7d508d
+# ╟─a408e84d-9287-44e1-8d0d-ce81d0f29328
+# ╟─a93c3439-b514-4b3c-b9b3-43e977750eea
+# ╟─3eb5695a-f0a5-4799-b6d5-f9573afc881b
+# ╟─270e8ca6-1a11-4bfd-bb3d-4940a3769438
+# ╟─84a6d496-0b82-4299-8a00-345cbb94df7a
+# ╟─736e5009-8e28-41b6-8642-e9d8bef09c39
+# ╟─a015d3f2-ca55-4306-afdd-8f29c07724c5
+# ╟─b799f7f6-5abc-47cf-b981-f97d9496de47
+# ╟─f247a574-b6d4-4257-85f0-476ed96eb43a
+# ╟─ac4f5042-2cbb-4f61-8bcb-677b6c47d914
+# ╟─4d3b1bc4-cec5-42fa-85f3-be9e80f68292
+# ╟─b48defab-6c6f-4e56-b90d-484a6f884df7
+# ╟─4ae352eb-3048-44a4-99e3-d16a3ce98016
+# ╟─a1573a5c-58b3-41c7-816e-e07e6bfcb02e
+# ╟─871d1fe1-b228-4cbe-9ad1-951dbb0a3c0b
+# ╟─22900c46-61d6-491b-9f96-79163e0c53d3
 # ╟─d59015cb-e1f7-4f9e-9a21-180eff8e4b77
 # ╟─790f95ac-38f5-4546-8503-8a969aa33918
 # ╟─53452089-7f8a-4fc1-871b-1313e866436f
@@ -493,8 +1047,8 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╟─723b6ebd-36be-4ea0-9669-ea9250592d78
 # ╟─1c99fb27-3589-42ca-af1f-486879c86f6d
 # ╟─33d2cc6e-a883-47fd-b764-3de3660e196a
-# ╠═9ee1290d-9fce-468a-b364-094f52d4d57b
-# ╠═1af7b767-79f7-4dec-81d4-eed06e4d7bac
+# ╟─9ee1290d-9fce-468a-b364-094f52d4d57b
+# ╟─1af7b767-79f7-4dec-81d4-eed06e4d7bac
 # ╟─79a0db60-7bc5-47c9-bbea-f18743e54342
 # ╟─08300d8f-c079-4a2e-a102-b70f567f439c
 # ╟─613362b9-ce0d-4d74-a1e3-8e88a0859249
