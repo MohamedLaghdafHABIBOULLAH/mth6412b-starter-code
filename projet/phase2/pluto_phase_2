@@ -340,6 +340,104 @@ Test.DefaultTestSet("Node, Edge, and Graph Tests", Any[], 14, false, false, true
 ```
 """
 
+# ╔═╡ 22455371-3ee9-4911-8990-42b798362ff9
+md"""
+##### 6. tester vos implémentations sur diverses instances de TSP symétrique dans un programme principal et commenter.
+"""
+
+# ╔═╡ 65bbf98d-9519-4360-b4bb-513320b5aa3d
+md"""
+On teste l'algorithme prim sur les instances suivantes : gr17, bayg29
+"""
+
+# ╔═╡ ada97268-87fd-4a67-8d7f-994629a0ff53
+md"""
+```julia
+Prim algorithm with instance gr17
+Edge: 1-13, Weight: 70.0
+Edge: 4-13, Weight: 27.0
+Edge: 7-13, Weight: 47.0
+Edge: 7-8, Weight: 29.0
+Edge: 7-17, Weight: 29.0
+Edge: 6-8, Weight: 34.0
+Edge: 14-17, Weight: 96.0
+Edge: 14-15, Weight: 57.0
+Edge: 3-15, Weight: 53.0
+Edge: 3-11, Weight: 110.0
+Edge: 5-11, Weight: 61.0
+Edge: 10-11, Weight: 154.0
+Edge: 4-9, Weight: 175.0
+Edge: 9-12, Weight: 95.0
+Edge: 12-16, Weight: 157.0
+Edge: 2-5, Weight: 227.0
+Total Weight: 1421.0
+
+ Range (min … max):  14.597 ms … 25.620 ms  ┊ GC (min … max): 0.00% … 13.59%
+ Time  (median):     14.777 ms              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   15.130 ms ±  1.086 ms  ┊ GC (mean ± σ):  1.50% ±  4.04%
+
+  ▃▇█▇▅▃▁                                                      
+  ███████▆▇█▆▆▆▁▁▆▁▆▄▄▁▁▆▄▄▄▁▁▁▁▄▁▁▁▁▁▁▁▁▁▄▄▁█▄▄▄▇▆█▄▄▄▆▁▁▁▄▆ ▆
+  14.6 ms      Histogram: log(frequency) by time      17.9 ms <
+
+ Memory estimate: 5.82 MiB, allocs estimate: 311221.
+```
+"""
+
+# ╔═╡ ebbad467-0d2f-4ce5-a9d9-4396febae1ac
+md"""
+```julia
+Prim algorithm with instance bayg29
+Edge: 1-28, Weight: 34.0
+Edge: 1-24, Weight: 52.0
+Edge: 24-27, Weight: 38.0
+Edge: 8-27, Weight: 39.0
+Edge: 16-27, Weight: 48.0
+Edge: 6-28, Weight: 52.0
+Edge: 6-12, Weight: 46.0
+Edge: 5-6, Weight: 51.0
+Edge: 5-9, Weight: 42.0
+Edge: 5-21, Weight: 50.0
+Edge: 2-21, Weight: 41.0
+Edge: 2-20, Weight: 49.0
+Edge: 10-20, Weight: 25.0
+Edge: 4-10, Weight: 39.0
+Edge: 4-15, Weight: 34.0
+Edge: 15-19, Weight: 49.0
+Edge: 5-26, Weight: 51.0
+Edge: 26-29, Weight: 36.0
+Edge: 10-13, Weight: 51.0
+Edge: 19-25, Weight: 52.0
+Edge: 15-18, Weight: 56.0
+Edge: 14-18, Weight: 32.0
+Edge: 14-22, Weight: 36.0
+Edge: 17-22, Weight: 47.0
+Edge: 3-29, Weight: 60.0
+Edge: 11-22, Weight: 63.0
+Edge: 7-25, Weight: 72.0
+Edge: 23-27, Weight: 74.0
+Total Weight: 1319.0
+
+BenchmarkTools.Trial: 45 samples with 1 evaluation.
+ Range (min … max):  111.334 ms … 115.463 ms  ┊ GC (min … max): 0.00% … 0.00%
+ Time  (median):     113.936 ms               ┊ GC (median):    1.50%
+ Time  (mean ± σ):   113.485 ms ±   1.014 ms  ┊ GC (mean ± σ):  1.13% ± 0.69%
+
+                                      ▁ ▃█▃▃                     
+  ▄▁▁▇▄▄▁▄▄▁▄▄▄▁▁▁▄▁▁▁▁▁▁▁▁▁▄▁▁▄▁▁▄▁▁▇█▇████▇▄▁▁▄▁▄▁▁▁▁▁▁▁▁▁▁▁▄ ▁
+  111 ms           Histogram: frequency by time          115 ms <
+
+ Memory estimate: 44.09 MiB, allocs estimate: 2451533.
+```
+"""
+
+# ╔═╡ 6ac94edd-35ac-4163-b442-f065f9ef5f0e
+md""" dd
+"""
+
+# ╔═╡ 3b5ba3bf-8cb3-44ef-9d3c-0696dbf8a139
+
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -402,10 +500,16 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 # ╠═1af7b767-79f7-4dec-81d4-eed06e4d7bac
 # ╟─79a0db60-7bc5-47c9-bbea-f18743e54342
 # ╟─08300d8f-c079-4a2e-a102-b70f567f439c
-# ╟─613362b9-ce0d-4d74-a1e3-8e88a0859249
+# ╠═613362b9-ce0d-4d74-a1e3-8e88a0859249
 # ╟─31731546-f972-4e36-8508-623ab6ff257e
 # ╟─e4f5b0ae-773a-4dae-ab00-78e5715195e4
 # ╟─22ac3ee9-240c-4ce4-b715-f39d2cfa3d19
 # ╟─37a77e33-d9ce-48b4-9934-ad41c84a0a6e
+# ╟─22455371-3ee9-4911-8990-42b798362ff9
+# ╟─65bbf98d-9519-4360-b4bb-513320b5aa3d
+# ╟─ada97268-87fd-4a67-8d7f-994629a0ff53
+# ╟─ebbad467-0d2f-4ce5-a9d9-4396febae1ac
+# ╠═6ac94edd-35ac-4163-b442-f065f9ef5f0e
+# ╠═3b5ba3bf-8cb3-44ef-9d3c-0696dbf8a139
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
