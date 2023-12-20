@@ -30,8 +30,11 @@ function convert_to_edge(edge, weight, nodes)
     node2 = nodes[edge[2]]
     
     # Crée une nouvelle arête (Edge) avec une clé au format "node1-node2", les nœuds node1 et node2, et le poids spécifié
-    edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
-    
+    if weight != 0
+        edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, weight)
+    elseif edge[1] == 1 || edge[2] == 1
+        edge = Edge(string(edge[1]) * "-" * string(edge[2]), node1, node2, 10000000.)
+    end
     # Retourne l'arête créée
     return edge
 end
@@ -61,7 +64,7 @@ function graph_from_instance(filename::String)
     edges_inst, weights_inst = read_edges(header, filename)
 
     # Vérification du type de données d'affichage et génération des nœuds en conséquence
-    if header["DISPLAY_DATA_TYPE"] == "None"
+    if header["DISPLAY_DATA_TYPE"] == "None" || header["DISPLAY_DATA_TYPE"] == "NO_DISPLAY"
         nodes = generate_nodes(dim)
     else
         nodes_inst = read_nodes(header, filename)
